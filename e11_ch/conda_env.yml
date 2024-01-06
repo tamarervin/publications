@@ -1,4 +1,4 @@
-name: e15  # environment name
+name: e11_conjunction  # environment name
 channels:
   - defaults
   - conda-forge
@@ -22,5 +22,4 @@ dependencies:
     - astrospice == 0.2.0
     - heliopy == 1.0.0
     - streamtracer
-    - plasmapy
     - pyspedas
