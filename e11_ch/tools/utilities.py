@@ -106,11 +106,11 @@ def abunplot(ax, var, solo, solodown):
 #     df_avg = pd.concat(avg_columns, axis=1)
 #     return df_avg
 
-def lon_bin(df, counts=1):
+def lon_bin(df, counts=1, vv='sslon'):
     lon_step = 1
     bin_edges = np.arange(50, 201, step=lon_step)
     bin_labels = np.arange(50, 201, step=lon_step)[:-1]
-    df['bins'] = pd.cut(df['lon'], bins=bin_edges, labels=bin_labels)
+    df['bins'] = pd.cut(df[vv], bins=bin_edges, labels=bin_labels)
     
     avg_columns = []
     for column in df.columns:
@@ -175,8 +175,6 @@ def read_data(RES_DIR, sigma_time=20):
     parker = pd.read_csv(file[0])
     parker = parker[parker['flag'] == 0].copy()
     parker['Time'] = [datetime.datetime.strptime(d, '%Y-%m-%d %H:%M:%S.%f') for d in parker.Time]
-    use = np.logical_and(pd.Timestamp('2023-03-15 00:00:00')<=parker.Time, parker.Time<=pd.Timestamp('2023-03-20 12:00:00'))
-    parker = parker[use].copy()
     parker = parker.set_index(parker.Time)
     
     pss = parker.resample(sigma_bin, closed='left', label='left', loffset=sigma_bin / 2).mean()
@@ -191,6 +189,12 @@ def read_data(RES_DIR, sigma_time=20):
     oss = orbiter.resample(sigma_bin, closed='left', label='left', loffset=sigma_bin / 2).mean()
     oss['Time'] = oss.index
 
+    # READ IN HIS ORBITER DATA
+    file = glob.glob(os.path.realpath(os.path.join(RES_DIR, 'orbiter_his.csv')))
+    his_orbiter = pd.read_csv(file[0])
+    his_orbiter['Time'] = [datetime.datetime.strptime(d, '%Y-%m-%d %H:%M:%S.%f') for d in his_orbiter.Time]
+    his_orbiter = his_orbiter.set_index(his_orbiter.Time)
+
     #### RESAMPLE DATA ####
     parkerdownt = parker.resample(bin_size, closed='left', label='left', loffset=bin_size / 2).mean()
     parkerdownt['Time'] = parkerdownt.index
@@ -201,4 +205,9 @@ def read_data(RES_DIR, sigma_time=20):
     orbiterdownt['Time'] = orbiterdownt.index
     orbiterdownl = lon_bin(orbiter, vv='sslon')
 
-    return parker, parkerdownt, parkerdownl, pss, orbiter, orbiterdownl, orbiterdownt, oss
+    #### RESAMPLE DATA ####
+    his_orbiterdownt = his_orbiter.resample(bin_size, closed='left', label='left', loffset=bin_size / 2).mean()
+    his_orbiterdownt['Time'] = his_orbiterdownt.index
+    his_orbiterdownl = lon_bin(his_orbiter, vv='sslon')
+
+    return parker, parkerdownt, parkerdownl, pss, orbiter, orbiterdownl, orbiterdownt, oss, his_orbiter, his_orbiterdownt, his_orbiterdownl
