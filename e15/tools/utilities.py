@@ -152,7 +152,7 @@ def rollto180(arr:u.deg) :
 
 
 ### ------ READ IN DATA ------ ###
-def read_data(RES_DIR, sigma_time=20, pp='parker.csv'):
+def read_data(RES_DIR, sigma_time=20, pp='parker.csv', pflag=True):
     # BIN SIZES
     bin_size = pd.Timedelta(minutes=30)
     sigma_bin = pd.Timedelta(minutes=sigma_time)
@@ -160,8 +160,11 @@ def read_data(RES_DIR, sigma_time=20, pp='parker.csv'):
     # READ IN PSP DATA
     file = glob.glob(os.path.join(RES_DIR, pp))
     parker = pd.read_csv(file[0])
-    parker = parker[parker['flag'] == 0].copy()
     parker['Time'] = [datetime.datetime.strptime(d, '%Y-%m-%d %H:%M:%S.%f') for d in parker.Time]
+    if pflag:
+        sa = np.logical_and(pd.Timestamp('2023-03-16 18:00:00')<=parker.Time, parker.Time<=pd.Timestamp('2023-03-17 00:00:00'))
+        parker['flag'][sa] = np.zeros(len(parker['flag'][sa]))
+        parker = parker[parker['flag'] == 0].copy()
     use = np.logical_and(pd.Timestamp('2023-03-15 00:00:00')<=parker.Time, parker.Time<=pd.Timestamp('2023-03-20 12:00:00'))
     parker = parker[use].copy()
     parker = parker.set_index(parker.Time)
