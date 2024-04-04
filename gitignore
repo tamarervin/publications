@@ -1,0 +1,36 @@
+*.fits
+*.csv
+*.cdf
+*.pdf
+*.eps
+
+### encounter 11 PS
+/e11/
+
+### encounter 15
+/e15/eps_figures/
+/e15/figures/
+/e15/results/
+/e15/deprecated/
+/e15/*.csv
+/e15/*.cdf
+/e15/psp_data/
+/e15/solar_orbiter_data/
+/e15/wind_data/
+
+### encounter 11 CH
+/e11_ch/figures/
+/e11_ch/results/
+/e11_ch/eps_figures/
+/e11_ch/data/
+/e11_ch/solar_orbiter_data/
+/e11_ch/psp_data/
+/e11_ch/*.fits
+/e11_ch/*.cdf
+
+### other
+/other/
+
+### sasw
+/sasw/
+/sasw/WIND.csv
