@@ -66,17 +66,17 @@ def calc_sigma(dataframe, num=341):
     vA = np.linalg.norm([Vra, Vta, Vna], axis=0)
 
     # calculate magnetic field in velocity units
-    delta_Vrb = calculate_velocity_change(delta_Br, dataframe.use_dens.values) * (-1 * dataframe.polarity)
-    delta_Vtb = calculate_velocity_change(delta_Bt, dataframe.use_dens.values) * (-1 * dataframe.polarity)
-    delta_Vnb = calculate_velocity_change(delta_Bn, dataframe.use_dens.values) * (-1 * dataframe.polarity) 
+    delta_Vrb = calculate_velocity_change(delta_Br, dataframe.use_dens.values) * (dataframe.polarity)
+    delta_Vtb = calculate_velocity_change(delta_Bt, dataframe.use_dens.values) * (dataframe.polarity)
+    delta_Vnb = calculate_velocity_change(delta_Bn, dataframe.use_dens.values) * (dataframe.polarity) 
     
     # calculate Zp and Zm
-    Zpr = delta_Vr.values + delta_Vrb.values
-    Zpt = delta_Vt.values + delta_Vtb.values
-    Zpn = delta_Vn.values + delta_Vnb.values
-    Zmr = delta_Vr.values - delta_Vrb.values
-    Zmt = delta_Vt.values - delta_Vtb.values
-    Zmn = delta_Vn.values - delta_Vnb.values
+    Zpr = delta_Vr.values - delta_Vrb.values
+    Zpt = delta_Vt.values - delta_Vtb.values
+    Zpn = delta_Vn.values - delta_Vnb.values
+    Zmr = delta_Vr.values + delta_Vrb.values
+    Zmt = delta_Vt.values + delta_Vtb.values
+    Zmn = delta_Vn.values + delta_Vnb.values
 
     # take norm
     Zpsquare = Zpr**2 + Zpt**2 + Zpn**2
@@ -86,15 +86,11 @@ def calc_sigma(dataframe, num=341):
     deltab = delta_Vrb**2 + delta_Vtb**2 + delta_Vnb**2 
 
     # background time average
-    # numerator = delta_Vr * delta_Vrb + delta_Vt * delta_Vtb + delta_Vn * delta_Vnb
-    num_avg = smooth(Zpsquare, num) - smooth(Zmsquare, num)
-    # num_avg = smooth(numerator, num)
     deltav_avg = smooth(deltav, num)
     deltab_avg = smooth(deltab, num)
-    denom = smooth(Zpsquare, num) + smooth(Zmsquare, num)
 
     # calculate sigma
-    sigmac = 2 * num_avg / denom
+    sigmac = (smooth(Zpsquare, num) - smooth(Zmsquare, num)) / (smooth(Zpsquare, num) + smooth(Zmsquare, num))
     denom = smooth(deltav, num) + smooth(deltab, num)
     sigmar = (deltav_avg - deltab_avg) / denom
     
@@ -127,17 +123,17 @@ def calc_components(dataframe, num=371):
     vA = np.linalg.norm([Vra, Vta, Vna], axis=0)
 
     # calculate magnetic field in velocity units
-    delta_Vrb = calculate_velocity_change(delta_Br, dataframe.use_dens.values) * (-1 * dataframe.polarity)
-    delta_Vtb = calculate_velocity_change(delta_Bt, dataframe.use_dens.values) * (-1 * dataframe.polarity)
-    delta_Vnb = calculate_velocity_change(delta_Bn, dataframe.use_dens.values) * (-1 * dataframe.polarity)
+    delta_Vrb = calculate_velocity_change(delta_Br, dataframe.use_dens.values) * (dataframe.polarity)
+    delta_Vtb = calculate_velocity_change(delta_Bt, dataframe.use_dens.values) * (dataframe.polarity)
+    delta_Vnb = calculate_velocity_change(delta_Bn, dataframe.use_dens.values) * (dataframe.polarity) 
     
     # calculate Zp and Zm
-    Zpr = delta_Vr.values + delta_Vrb.values
-    Zpt = delta_Vt.values + delta_Vtb.values
-    Zpn = delta_Vn.values + delta_Vnb.values
-    Zmr = delta_Vr.values - delta_Vrb.values
-    Zmt = delta_Vt.values - delta_Vtb.values
-    Zmn = delta_Vn.values - delta_Vnb.values
+    Zpr = delta_Vr.values - delta_Vrb.values
+    Zpt = delta_Vt.values - delta_Vtb.values
+    Zpn = delta_Vn.values - delta_Vnb.values
+    Zmr = delta_Vr.values + delta_Vrb.values
+    Zmt = delta_Vt.values + delta_Vtb.values
+    Zmn = delta_Vn.values + delta_Vnb.values
 
     # take norm
     Zpsquare = Zpr**2 + Zpt**2 + Zpn**2
